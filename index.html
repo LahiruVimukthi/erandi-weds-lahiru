@@ -66,21 +66,40 @@
         </div>
         </div>
 </div>
-    <script>
+    <!-- CUSTOM RSVP SUCCESS MODAL -->
+<div id="custom-modal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <span class="gold-symbol">❦</span>
+            <h3 id="modal-title">THANK YOU!</h3>
+            <p class="modal-subtitle">ස්තූතියි!</p>
+        </div>
+        <div class="modal-body">
+            <p id="modal-guest-name" class="modal-guest"></p>
+            <p id="modal-message-text">Your RSVP response has been successfully recorded.</p>
+            <p class="modal-subtext">We look forward to celebrating our special day with you!</p>
+        </div>
+        <button id="modal-close-btn" onclick="closeSuccessModal()">CLOSE</button>
+    </div>
+</div>
+  <script>
+    // ==========================================
+    // 1. LANGUAGE TAB TOGGLE FUNCTION
+    // ==========================================
     function showTab(lang) {
-        // 1. Hide all content sections
+        // Hide all language content sections
         const sections = document.querySelectorAll('.content-section');
         sections.forEach(section => {
             section.classList.remove('active');
         });
 
-        // 2. Remove active state from all buttons
+        // Remove active button highlights
         const buttons = document.querySelectorAll('.tab-btn');
         buttons.forEach(button => {
             button.classList.remove('active');
         });
 
-        // 3. Show the selected section and button
+        // Activate the chosen section and button
         document.getElementById(lang).classList.add('active');
         
         if (lang === 'english') {
@@ -91,43 +110,62 @@
     }
 
     // ==========================================
-    // 1. DYNAMIC URL GUEST NAME EXTRACTOR
+    // 2. DYNAMIC URL GUEST NAME EXTRACTOR
     // ==========================================
     const urlParams = new URLSearchParams(window.location.search);
-    const name = urlParams.get('name');
+    const rawName = urlParams.get('name');
     
-    if (name) {
-        const cleanName = decodeURIComponent(name).trim();
+    // Safely decode special characters (such as '&' or spaces) in guest names
+    const cleanName = rawName ? decodeURIComponent(rawName).trim() : "Honored Guest";
+    
+    // Update visible design elements in English and Sinhala cards
+    if (document.getElementById('guest-en')) document.getElementById('guest-en').innerText = cleanName;
+    if (document.getElementById('guest-si')) document.getElementById('guest-si').innerText = cleanName;
+    
+    // Populate hidden form field used for payload generation
+    if (document.getElementById('hidden-guest-name')) {
+        document.getElementById('hidden-guest-name').value = cleanName;
+    }
+    console.log("Extracted guest name successfully:", cleanName);
+
+    // ==========================================
+    // 3. CUSTOM MODAL CONTROLLERS
+    // ==========================================
+    function showSuccessModal(guestName) {
+        const modal = document.getElementById('custom-modal');
+        const guestDisplay = document.getElementById('modal-guest-name');
         
-        // Update visible elements
-        if (document.getElementById('guest-en')) document.getElementById('guest-en').innerText = cleanName;
-        if (document.getElementById('guest-si')) document.getElementById('guest-si').innerText = cleanName;
-        
-        // FIX: Update the hidden input field so the form actually knows who is typing!
-        if (document.getElementById('hidden-guest-name')) {
-            document.getElementById('hidden-guest-name').value = cleanName;
+        if (guestDisplay) {
+            guestDisplay.innerText = "Dear " + guestName + ",";
         }
-        console.log("Extracted guest name successfully:", cleanName);
-    } else {
-        // Fallback name if no URL parameter is provided during local tests
-        if (document.getElementById('hidden-guest-name')) {
-            document.getElementById('hidden-guest-name').value = "Honored Guest";
+        
+        if (modal) {
+            modal.classList.add('active');
+        }
+    }
+
+    function closeSuccessModal() {
+        const modal = document.getElementById('custom-modal');
+        if (modal) {
+            modal.classList.remove('active');
         }
     }
 
     // ==========================================
-    // 2. MAKE.COM WEBHOOK TRANSMISSION
+    // 4. MAKE.COM WEBHOOK TRANSMISSION
     // ==========================================
     document.getElementById('rsvp-form').addEventListener('submit', function(event) {
-        // Stop default browser form forwarding/reloading behavior
+        // Prevent default HTML form reload behavior
         event.preventDefault(); 
         
-        // Capture final values
-        const guestName = document.getElementById('hidden-guest-name').value;
-        const rsvpStatus = document.querySelector('input[name="rsvp_status"]:checked').value;
-        const guestWishes = document.getElementById('message').value;
+        // Capture input values from DOM elements
+        const guestName = document.getElementById('hidden-guest-name').value || "Honored Guest";
+        const selectedRadio = document.querySelector('input[name="rsvp_status"]:checked');
+        const rsvpStatus = selectedRadio ? selectedRadio.value : "Not Specified";
+        const messageElement = document.getElementById('message');
+        const guestWishes = messageElement ? messageElement.value.trim() : "";
 
-        // Structured JSON payload matching Make data parameters
+        // Structure JSON payload matching Make.com attributes
         const formData = {
             name: guestName,
             rsvp: rsvpStatus,
@@ -139,7 +177,7 @@
         
         const makeWebhookUrl = 'https://hook.eu1.make.com/74ghgax5k2kh8to26pfvinnh6koodtee';
 
-        // Perform asynchronous network API posting
+        // Issue asynchronous HTTP POST request to Make Webhook endpoint
         fetch(makeWebhookUrl, {
             method: 'POST',
             headers: {
@@ -151,12 +189,15 @@
             console.log("Server Response Status:", response.status);
 
             if (response.ok) {
-                alert('Thank you! Your response has been received.');
+                // Trigger the custom success modal
+                showSuccessModal(guestName);
+                
+                // Clear active form selections
                 document.getElementById('rsvp-form').reset();
                 
-                // Re-preserve the hidden name in case they submit twice
-                if (name) {
-                    document.getElementById('hidden-guest-name').value = decodeURIComponent(name).trim();
+                // Restore hidden guest name field so subsequent submissions retain identity
+                if (document.getElementById('hidden-guest-name')) {
+                    document.getElementById('hidden-guest-name').value = cleanName;
                 }
             } else {
                 alert('Something went wrong. Server status: ' + response.status);
