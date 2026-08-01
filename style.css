@@ -1,0 +1,497 @@
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@400;700&family=Noto+Serif+Sinhala:wght@300;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
+
+:root {
+    --ivory: #FCFBF4;
+    --gold: #C5A059;
+    --wash-green: #77815C;
+}
+
+body {
+    background-color: #f0f0ed;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column; /* Stack tabs on top of card */
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Tab Styles */
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    gap: 10px;
+    width: 100%;
+}
+
+.tab-btn {
+    padding: 10px 25px;
+    border: none;
+    background: var(--wash-green);
+    color: white;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    opacity: 0.6;
+}
+
+.tab-btn.active {
+    opacity: 1;
+    font-weight: bold;
+}
+
+/* Card Container */
+/* Updated Container for better readability */
+.invitation-container {
+background-color: var(--ivory);
+    width: 90%; /* Responsive width */
+    max-width: 450px; /* Maximum width for desktop */
+    margin: 20px auto; /* Centers the card and adds a small gap top/bottom */
+    padding: 30px 25px;
+    position: relative;
+    text-align: center;
+    border: 1px solid #ddd;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    
+    /* Allow the card to grow with content but not force a scroll if possible */
+    min-height: auto;
+}
+
+/* Background Image as a subtle watermark */
+.background-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Use your image here */
+    background-image: url('watermark.png'); 
+    background-size: cover;
+    background-position: center;
+    /* This makes the image very faint so text is readable */
+    opacity: 0.15; 
+    z-index: 0;
+}
+
+/* A wrapper to keep text above the image */
+.text-content {
+    position: relative;
+    z-index: 1; /* Sits on top of the background */
+}
+
+/* Formal Parent Text */
+.parent-names {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+/* The logic to hide/show sections */
+.content-section {
+    position: relative;
+    z-index: 1;
+    display: none; /* Hidden by default */
+}
+
+/* Only show when the 'active' class is added via JavaScript */
+.content-section.active {
+    display: block !important;
+}
+
+
+/* Subtext like "together with" or "request the honor" */
+.invitation-subtext {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--wash-green);
+    margin: 15px 0;
+}
+
+/* Couple Names (The focus) */
+.couple-names {
+    font-family: 'Great Vibes', cursive;
+    font-size: 4rem;
+    color: var(--gold);
+    margin: 15px 0;
+    font-weight: normal;
+    word-spacing: 15px;
+}
+
+/* Event Detail text: Date, Venue, Time */
+.event-details {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: #4a4a4a;
+    line-height: 1.8;
+    letter-spacing: 1.5px;
+    margin-top: 20px;
+    text-transform: uppercase;
+}
+
+/* Enhancing the Guest Name placeholder */
+.guest-highlight {
+   font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #AA771C; /* Changed from #333 to a rich dark gold */
+    padding: 5px 20px;
+    border-bottom: 1px solid var(--gold);
+    display: inline-block;
+    margin: 15px 0;
+}
+.rsvp-section {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(197, 160, 89, 0.3); /* Subtle gold divider */
+}
+
+.rsvp-deadline {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 20px;
+}
+
+.radio-group {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 25px;
+}
+
+.radio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px; /* Space between circle and text */
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+/* Customizing the Radio Button */
+input[type="radio"] {
+    /* Step 1: Remove default blue circle */
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: var(--ivory);
+    margin: 0;
+
+    /* Step 2: Design our own circle */
+    font: inherit;
+    color: var(--gold);
+    width: 1.15em;
+    height: 1.15em;
+    border: 1px solid var(--gold); /* Gold border */
+    border-radius: 50%;
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+}
+
+/* Step 3: Style the 'Selected' state */
+input[type="radio"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    border-radius: 50%;
+    transform: scale(0); /* Hidden by default */
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--wash-green); /* The "dot" is Wash Green */
+}
+
+input[type="radio"]:checked::before {
+    transform: scale(1); /* Shows the green dot when selected */
+}
+
+input[type="radio"]:focus {
+    outline: 1px solid var(--gold);
+    outline-offset: 2px;
+}
+    
+/* The Submit Button */
+.submit-btn {
+    background-color: var(--wash-green);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 2px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.4s ease, transform 0.2s ease;
+    border-radius: 2px;
+}
+
+/* Re-applying the Gold Hover */
+.submit-btn:hover {
+    background-color: var(--gold) !important; /* Force gold color */
+    margin: 20px auto;
+   transform: translateY(-1px); /* Subtle lift effect */
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgba(197, 160, 89, 0.3);
+    background-color: rgba(255, 255, 255, 0.4);
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    box-sizing: border-box; 
+    resize: none; /* Prevents guests from stretching it and breaking layout */
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 5px rgba(197, 160, 89, 0.2);
+}
+
+/* Placeholder styling */
+textarea::placeholder {
+    font-style: italic;
+    opacity: 0.6;
+}
+
+.submit-btn:hover {
+   display: block;
+    margin: 0 auto; /* Centers the button */
+    background-color: var(--wash-green);
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    font-family: 'Cinzel', serif;
+    cursor: pointer;
+    width: fit-content;
+}
+/* Add a specific rule for the Sinhala section */
+#sinhala {
+    font-family: 'Abhaya Libre', serif; /* Elegant, high-contrast font */
+    color: #4a4a4a;
+}
+
+.couple-names_2 {
+    /* "Sri Subha Mangalam" header */
+   font-family: 'Abhaya Libre', serif !important;
+    font-size: 4rem;
+    color: var(--gold);
+    margin: 15px;
+    font-weight: normal;
+    word-spacing: 15px;
+
+}
+
+.parent-names_2 {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+#sinhala .bridge-text {
+    font-family: 'Abhaya Libre', serif;
+    font-style: italic; /* Looks very sophisticated in Abhaya */
+    font-size: 1rem;
+    color: #777;
+}
+
+#sinhala .event-details {
+    /* Using Gemunu Libre for the "data" parts (Date/Venue) */
+    font-family: 'Gemunu Libre', sans-serif;
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    margin-top: 25px;
+    color: #333;
+}
+
+/* Ensure the card expands to fit content */
+.invitation-container {
+    height: auto;
+    min-height: 600px; /* Adjust based on your image height */
+    display: flex;
+    flex-direction: column;
+}
+.poetic-header {
+    font-family: 'Abhaya Libre', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+
+}
+
+.gold-divider {
+    width: 60%;
+    height: 1px;
+    background: var(--gold);
+    margin: 0 auto 20px;
+    opacity: 0.5;
+}
+relationship-text {
+    font-family: 'Abhaya Libre', serif;
+    font-size: 1rem;
+    color: #555;
+    margin-top: 5px;
+    margin-bottom: 5px
+}
+
+.decorative-icon {
+    color: var(--gold);
+    font-size: 1.2rem;
+    margin: 15px 0;
+}
+
+/* Event Details in the new style */
+.event-details-sinhala {
+    font-family: 'Abhaya Libre', serif;
+    line-height: 1.8;
+    color: #444;
+    margin-top: 20px;
+}
+
+.gold-date {
+    color: #AA771C; /* Darker Gold for readability */
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.closing-text {
+    font-style: italic;
+    color: var(--gold);
+    display: block;
+    margin-top: 10px;
+}
+/* Mobile Optimization */
+@media (max-width: 480px) {
+    .invitation-container {
+        padding: 30px 20px; /* Less padding on small screens */
+        width: 85%;
+    }
+
+    .names {
+        font-size: 2.2rem; /* Smaller couple names for mobile */
+    }
+
+    .parent-names {
+        font-size: 0.7rem;
+        letter-spacing: 1.5px;
+    }
+
+    .bridge-text {
+        font-size: 0.8rem;
+        margin: 12px 0;
+    }
+
+    .event-details {
+        font-size: 0.75rem;
+    }
+}
+/* ==========================================
+   CUSTOM SUCCESS MODAL STYLING
+   ========================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease-in-out;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-card {
+    background: #FCFBFA; /* Soft Ivory */
+    border: 2px solid var(--gold, #C5A059);
+    padding: 30px 25px;
+    border-radius: 8px;
+    max-width: 420px;
+    width: 85%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    transform: translateY(20px);
+    transition: transform 0.4s ease-in-out;
+}
+
+.modal-overlay.active .modal-card {
+    transform: translateY(0);
+}
+
+.gold-symbol {
+    color: #AA771C;
+    font-size: 1.8rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.modal-header h3 {
+    font-family: 'Cinzel', 'Playfair Display', serif;
+    color: #AA771C;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+.modal-subtitle {
+    font-family: 'Abhaya Libre', serif;
+    color: #666;
+    font-size: 1.1rem;
+    margin: 2px 0 15px 0;
+}
+
+.modal-guest {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #AA771C;
+    margin-bottom: 10px;
+}
+
+#modal-message-text {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.4;
+}
+
+.modal-subtext {
+    font-size: 0.85rem;
+    color: #777;
+    font-style: italic;
+    margin-top: 8px;
+}
+
+#modal-close-btn {
+    background: #5D675B; /* Elegant Sage Green */
+    color: #FFF;
+    border: none;
+    padding: 10px 25px;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.3s ease;
+}
+
+#modal-close-btn:hover {
+    background: #4A5348;
+}
