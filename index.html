@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;700&family=Gemunu+Libre:wght@300;600&family=Cinzel+Decorative:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="invitation-container">
+        <div class="background-layer"></div>
+
+    <div class="text-content">
+        <div id="english" class="content-section active">
+            <p class="parent-names">MR. AND MRS. RATHNAYAKE</p>
+            <p class="event-details">TOGETHER WITH</p>
+            <p class="parent-names">MR. AND MRS. ADIKARI</p>
+            
+            <p class="event-details">REQUEST THE PLEASURE OF THE COMPANY OF</p>
+            <h3 id="guest-en" class="guest-highlight">[Guest Name]</h3>
+            
+            <p class="event-details">
+                to grace the occasion of the marriage of their children
+            </p>
+            <h1 class="couple-names">Lahiru & Erandi</h1>
+            
+            <p class="parent-names">
+                ON FRIDAY, 11TH OF SEPTEMBER 2026<br> From 9.00 AM onwards <br>
+                AT THE ROYAL BALLROOM<br>
+                QUEEN'S HOTEL, KANDY <br>
+                <p class="rsvp-deadline">Poruwa Ceremony at 10:00 AM</p>
+            </p>
+        </div>
+    
+        <!-- Shared RSVP Form -->
+        <div class="rsvp-section">
+            <p class="rsvp-deadline">RSVP BY 15th AUGUST 2026</p>
+            <form id="rsvp-form">
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="rsvp_status" value="Coming" required> 
+                        <span>COMING</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="rsvp_status" value="Not Coming"> 
+                        <span>NOT COMING</span>
+                    </label>
+                </div>
+                <div class="greetings-section">
+                    <label for="message" class="event-details">
+                        Leave a message for the couple (Optional)
+                    </label>
+                    <textarea 
+                        id="message" 
+                        name="guest_wishes" 
+                        placeholder="Write your warm wishes here..." 
+                        rows="2">
+                    </textarea>
+                </div>
+                <input type="hidden" name="guest_name" id="hidden-guest-name">
+                <button type="submit" class="submit-btn">SEND RESPONSE</button>
+            </form>
+        </div>
+        </div>
+</div>
+    <script>
+    function showTab(lang) {
+        // 1. Hide all content sections
+        const sections = document.querySelectorAll('.content-section');
+        sections.forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // 2. Remove active state from all buttons
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(button => {
+            button.classList.remove('active');
+        });
+
+        // 3. Show the selected section and button
+        document.getElementById(lang).classList.add('active');
+        
+        if (lang === 'english') {
+            document.getElementById('btn-en').classList.add('active');
+        } else {
+            document.getElementById('btn-si').classList.add('active');
+        }
+    }
+
+    // ==========================================
+    // 1. DYNAMIC URL GUEST NAME EXTRACTOR
+    // ==========================================
+    const urlParams = new URLSearchParams(window.location.search);
+    const name = urlParams.get('name');
+    
+    if (name) {
+        const cleanName = decodeURIComponent(name).trim();
+        
+        // Update visible elements
+        if (document.getElementById('guest-en')) document.getElementById('guest-en').innerText = cleanName;
+        if (document.getElementById('guest-si')) document.getElementById('guest-si').innerText = cleanName;
+        
+        // FIX: Update the hidden input field so the form actually knows who is typing!
+        if (document.getElementById('hidden-guest-name')) {
+            document.getElementById('hidden-guest-name').value = cleanName;
+        }
+        console.log("Extracted guest name successfully:", cleanName);
+    } else {
+        // Fallback name if no URL parameter is provided during local tests
+        if (document.getElementById('hidden-guest-name')) {
+            document.getElementById('hidden-guest-name').value = "Honored Guest";
+        }
+    }
+
+    // ==========================================
+    // 2. MAKE.COM WEBHOOK TRANSMISSION
+    // ==========================================
+    document.getElementById('rsvp-form').addEventListener('submit', function(event) {
+        // Stop default browser form forwarding/reloading behavior
+        event.preventDefault(); 
+        
+        // Capture final values
+        const guestName = document.getElementById('hidden-guest-name').value;
+        const rsvpStatus = document.querySelector('input[name="rsvp_status"]:checked').value;
+        const guestWishes = document.getElementById('message').value;
+
+        // Structured JSON payload matching Make data parameters
+        const formData = {
+            name: guestName,
+            rsvp: rsvpStatus,
+            wishes: guestWishes,
+            submittedAt: new Date().toISOString()
+        };
+        
+        console.log("Sending payload to Make.com:", formData);
+        
+        const makeWebhookUrl = 'https://hook.eu1.make.com/74ghgax5k2kh8to26pfvinnh6koodtee';
+
+        // Perform asynchronous network API posting
+        fetch(makeWebhookUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            console.log("Server Response Status:", response.status);
+
+            if (response.ok) {
+                alert('Thank you! Your response has been received.');
+                document.getElementById('rsvp-form').reset();
+                
+                // Re-preserve the hidden name in case they submit twice
+                if (name) {
+                    document.getElementById('hidden-guest-name').value = decodeURIComponent(name).trim();
+                }
+            } else {
+                alert('Something went wrong. Server status: ' + response.status);
+            }
+        })
+        .catch(error => {
+            console.error('Network Error details:', error);
+            alert('Connection error. Please confirm your Make scenario is active and running.');
+        });
+    });
+</script>
+</body>
+</html>
