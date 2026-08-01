@@ -135,10 +135,10 @@ background-color: var(--ivory);
 
 /* Enhancing the Guest Name placeholder */
 .guest-highlight {
-    font-family: 'Playfair Display', serif;
+     font-family: 'Playfair Display', serif;
     font-weight: 700;
     font-size: 1.3rem;
-    color: #333;
+    color: #AA771C; /* Changed from #333 to a rich dark gold */
     padding: 5px 20px;
     border-bottom: 1px solid var(--gold);
     display: inline-block;
