@@ -393,3 +393,105 @@ relationship-text {
         font-size: 0.75rem;
     }
 }
+* ==========================================
+   CUSTOM SUCCESS MODAL STYLING
+   ========================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease-in-out;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-card {
+    background: #FCFBFA; /* Soft Ivory */
+    border: 2px solid var(--gold, #C5A059);
+    padding: 30px 25px;
+    border-radius: 8px;
+    max-width: 420px;
+    width: 85%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    transform: translateY(20px);
+    transition: transform 0.4s ease-in-out;
+}
+
+.modal-overlay.active .modal-card {
+    transform: translateY(0);
+}
+
+.gold-symbol {
+    color: #AA771C;
+    font-size: 1.8rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.modal-header h3 {
+    font-family: 'Cinzel', 'Playfair Display', serif;
+    color: #AA771C;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+.modal-subtitle {
+    font-family: 'Abhaya Libre', serif;
+    color: #666;
+    font-size: 1.1rem;
+    margin: 2px 0 15px 0;
+}
+
+.modal-guest {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #AA771C;
+    margin-bottom: 10px;
+}
+
+#modal-message-text {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.4;
+}
+
+.modal-subtext {
+    font-size: 0.85rem;
+    color: #777;
+    font-style: italic;
+    margin-top: 8px;
+}
+
+#modal-close-btn {
+    background: #5D675B; /* Elegant Sage Green */
+    color: #FFF;
+    border: none;
+    padding: 10px 25px;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.3s ease;
+}
+
+#modal-close-btn:hover {
+    background: #4A5348;
+}
