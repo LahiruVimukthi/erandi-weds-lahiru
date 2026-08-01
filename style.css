@@ -396,23 +396,27 @@ relationship-text {
 /* ==========================================
    CUSTOM SUCCESS MODAL STYLING
    ========================================== */
+/* ==========================================
+   CUSTOM SUCCESS MODAL STYLING (CENTERED)
+   ========================================== */
 .modal-overlay {
-    position: fixed;
+    position: fixed; /* Positions relative to the browser window */
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    width: 100vw; /* Full screen width */
+    height: 100vh; /* Full screen height */
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark overlay */
+    backdrop-filter: blur(5px); /* Soft backdrop blur */
+    display: flex; /* Flexbox for precise centering */
+    justify-content: center; /* Horizontally center modal-card */
+    align-items: center; /* Vertically center modal-card */
+    z-index: 9999; /* Ensures modal stays above all content */
     opacity: 0;
     visibility: hidden;
-    transition: all 0.4s ease-in-out;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
+/* Activated state toggled by JavaScript */
 .modal-overlay.active {
     opacity: 1;
     visibility: visible;
@@ -426,15 +430,16 @@ relationship-text {
     max-width: 420px;
     width: 85%;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     transform: translateY(20px);
-    transition: transform 0.4s ease-in-out;
+    transition: transform 0.4s ease;
 }
 
 .modal-overlay.active .modal-card {
-    transform: translateY(0);
+    transform: translateY(0); /* Smooth slide-up effect on reveal */
 }
 
+/* Modal Typography & Accents */
 .gold-symbol {
     color: #AA771C;
     font-size: 1.8rem;
@@ -479,7 +484,7 @@ relationship-text {
 }
 
 #modal-close-btn {
-    background: #5D675B; /* Elegant Sage Green */
+    background: #5D675B; /* Sage Green */
     color: #FFF;
     border: none;
     padding: 10px 25px;
