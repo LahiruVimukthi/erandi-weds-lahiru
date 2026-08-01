@@ -110,23 +110,26 @@
     }
 
     // ==========================================
-    // 2. DYNAMIC URL GUEST NAME EXTRACTOR
-    // ==========================================
-    const urlParams = new URLSearchParams(window.location.search);
-    const rawName = urlParams.get('name');
-    
-    // Safely decode special characters (such as '&' or spaces) in guest names
-    const cleanName = rawName ? decodeURIComponent(rawName).trim() : "Honored Guest";
-    
-    // Update visible design elements in English and Sinhala cards
-    if (document.getElementById('guest-en')) document.getElementById('guest-en').innerText = cleanName;
-    if (document.getElementById('guest-si')) document.getElementById('guest-si').innerText = cleanName;
-    
-    // Populate hidden form field used for payload generation
-    if (document.getElementById('hidden-guest-name')) {
-        document.getElementById('hidden-guest-name').value = cleanName;
-    }
-    console.log("Extracted guest name successfully:", cleanName);
+// DYNAMIC URL GUEST NAME EXTRACTOR
+// ==========================================
+const urlParams = new URLSearchParams(window.location.search);
+const rawName = urlParams.get('name');
+
+// 1. Decode URL parameters (%26 -> &, %20 -> space)
+// 2. Normalize whitespace so multiple spaces convert to a single space
+const cleanName = rawName 
+    ? decodeURIComponent(rawName).replace(/\s+/g, ' ').trim() 
+    : "Honored Guest";
+
+// Display clean name in visible DOM elements
+if (document.getElementById('guest-en')) document.getElementById('guest-en').innerText = cleanName;
+if (document.getElementById('guest-si')) document.getElementById('guest-si').innerText = cleanName;
+
+// Set hidden form input value
+const hiddenInput = document.getElementById('hidden-guest-name');
+if (hiddenInput) {
+    hiddenInput.value = cleanName;
+}
 
     // ==========================================
     // 3. CUSTOM MODAL CONTROLLERS
